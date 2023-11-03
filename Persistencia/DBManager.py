@@ -5,7 +5,7 @@ class DBManager:
     def __init__():
         pass
     
-    def insert_delete_reset(**args) -> int:
+    def insert_delete_reset(*args) -> int:
         conn = sql.connect("BBDD/"+str(args[0]) + ".db")
         cursor = conn.cursor()
         try:
@@ -27,7 +27,7 @@ class DBManager:
             estado = 0
         return estado
     
-    def select(**args) -> list:
+    def select(*args) -> list:
         conn = sql.connect("BBDD/"+str(args[0]) + ".db")
         cursor = conn.cursor()
         cursor.execute(args[1])
