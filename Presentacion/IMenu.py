@@ -7,7 +7,7 @@ class IMenu:
         #window configuration
         self.window = Tk()
         self.window.title("ApaCreator")
-        self.window.geometry("450x450")
+        self.window.geometry("500x500")
         self.window.resizable(False, False)
         #definimos una imagen para ponerla como icono de la aplicacion
         icon = PhotoImage(file="media/libro-magico.png")
@@ -18,13 +18,19 @@ class IMenu:
         
         #button configuration
         #los botones centrados al margen izquierdo
-        self.citasButton = Button(self.window, text=" Generar Citas", bg=color_bg_button, fg=color_fg_button, width=50, height=2, font=("Garamond", 15), activebackground=color_bg_button, activeforeground=color_fg_button)
+        #definimos las imagenes para los botones
+        kitty1 = PhotoImage(file="media/icons8-hello-kitty-48.png")
+        kitty2 = PhotoImage(file="media/icons8-hello-kitty-50.png")
+        kitty3 = PhotoImage(file="media/icons8-hello-kitty-64.png")
+        kitty4 = PhotoImage(file="media/icons8-hello-kitty-100.png")
+        
+        self.citasButton = Button(self.window, text=" Generar Citas", bg=color_bg_button, fg=color_fg_button, width=300, height=70, font=("Garamond", 15), activebackground=color_bg_button, activeforeground=color_fg_button, image=kitty1, compound='left')
         self.citasButton.pack(pady=5)
-        self.autoresButtton = Button(self.window, text= "Ver autores", bg=color_bg_button, fg=color_fg_button, width=50, height=2, font=("Garamond", 15), activebackground=color_bg_button, activeforeground=color_fg_button)
+        self.autoresButtton = Button(self.window, text= "Ver autores", bg=color_bg_button, fg=color_fg_button, width=300, height=70, font=("Garamond", 15), activebackground=color_bg_button, activeforeground=color_fg_button, image=kitty2, compound="left")
         self.autoresButtton.pack(pady=5)
-        self.editorialButton = Button(self.window, text="Ver editoriales", bg=color_bg_button, fg=color_fg_button, width=50, height=2, font=("Garamond", 15), activebackground=color_bg_button, activeforeground=color_fg_button)
+        self.editorialButton = Button(self.window, text="Ver editoriales", bg=color_bg_button, fg=color_fg_button, width=300, height=70, font=("Garamond", 15), activebackground=color_bg_button, activeforeground=color_fg_button, image=kitty3, compound="left")
         self.editorialButton.pack(pady=5)
-        self.articulosButton = Button(self.window, text="Ver articulos", bg=color_bg_button, fg=color_fg_button, width=50, height=2, font=("Garamond", 15), activebackground=color_bg_button, activeforeground=color_fg_button)
+        self.articulosButton = Button(self.window, text="Ver articulos", bg=color_bg_button, fg=color_fg_button, width=300, height=70, font=("Garamond", 15), activebackground=color_bg_button, activeforeground=color_fg_button, image=kitty4, compound="left")
         self.articulosButton.pack(pady=5)
         
         self.window.mainloop()
