@@ -10,8 +10,9 @@ class IMenu:
         self.window.geometry("450x450")
         self.window.resizable(False, False)
         #definimos una imagen para ponerla como icono de la aplicacion
-        icon = PhotoImage(file=media/libro-magico.png)
-        self.window.config(bg=color_bg, icon=icon)
+        icon = PhotoImage(file="media/libro-magico.png")
+        self.window.config(bg=color_bg)
+        self.window.iconphoto(False, icon)
         self.title = Label(self.window, text="ApaCreator", bg=color_bg, fg=color_fg, font=("Garamond", 30))
         self.title.pack(pady=20)
         
