@@ -1,0 +1,5 @@
+imgButton1 = "media/icons8-hello-kitty-48.png"
+imgButton2 = "media/icons8-hello-kitty-50.png"
+imgButton3 = "media/icons8-hello-kitty-64.png"
+imgButton4 = "media/icons8-hello-kitty-100.png"
+imgIcon = "media/libro-magico.png"
