@@ -145,10 +145,10 @@ class IMain:
                     autores = autor.SelectAurotes()
                     for autor in autores:
                         self.list_autores.insert("end", autor[1]+" "+autor[2]+" "+autor[0])
-                    messagebox.showinfo("Exito", "Autor eliminado correctamente")
                     self.entry_nombre.delete(0, "end")
                     self.entry_apellido1.delete(0, "end")
                     self.entry_apellido2.delete(0, "end")
+                    messagebox.showinfo("Exito", "Autor eliminado correctamente")
                     self.entry_nombre.master.focus_set()
                     logging.info("Autor eliminado correctamente")
         else:
