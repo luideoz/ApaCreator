@@ -21,7 +21,7 @@ class AutorDAO:
         
     def delete(self,nombre,apellido1,apellido2) -> int:
         agent = DBManager()
-        state = agent.insert_delete_reset("autores", "DELETE FROM autores WHERE nombre = '"+nombre+"' AND apellido1 = '"+apellido1+"' AND apellido2 = '"+apellido2+"'")
+        state = agent.insert_delete_reset("autores", "DELETE FROM autor WHERE nombre = ? AND apellido1 = ? AND apellido2 = ?", (nombre, apellido1, apellido2))
         return state
     
     def reset(self) -> int:

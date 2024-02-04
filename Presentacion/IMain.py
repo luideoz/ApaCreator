@@ -62,6 +62,7 @@ class IMain:
         self.frame_autores.place(x=0, y=0, width=1000, height=600)
         self.list_autores = Listbox(self.frame_autores, background=self.config["listbox-background-color"], font=(self.config["font-family"], self.config["font-size"]), width=30, height=25)
         self.list_autores.place(x=10, y=10)
+        self.list_autores.bind("<<ListboxSelect>>", lambda x: self.click_list_autores())
         autores = Autor("","","").SelectAurotes()
         for autor in autores:
             self.list_autores.insert("end", autor[1]+" "+autor[2]+" "+autor[0])
@@ -79,7 +80,7 @@ class IMain:
         self.entry_apellido2.place(x=450, y=225)
         self.btn_agregar_autor = Button(self.frame_autores, text="Agregar", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"], command=self.agregar_autor)
         self.btn_agregar_autor.place(x=500, y=300)
-        self.btn_eliminar_autor = Button(self.frame_autores, text="Eliminar", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"])
+        self.btn_eliminar_autor = Button(self.frame_autores, text="Eliminar", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"], command=self.eliminar_autor)
         self.btn_eliminar_autor.place(x=500, y=350)
         self.btn_reset_autor = Button(self.frame_autores, text="Reset", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"])
         self.btn_reset_autor.place(x=500, y=400)
@@ -132,3 +133,44 @@ class IMain:
             else:
                 messagebox.showerror("Error", "No se pudo agregar el autor")
                 logging.error("No se pudo agregar el autor")
+                self.entry_nombre.master.focus_set()
+
+    def eliminar_autor(self):
+        if self.entry_nombre.get() != "" and self.entry_apellido1.get() != "" and self.entry_apellido2.get() != "":
+            if messagebox.askyesno("Eliminar", "¿Estas seguro de que quieres eliminar este autor?"):
+                autor = Autor(self.entry_nombre.get(), self.entry_apellido1.get(), self.entry_apellido2.get())
+                status = autor.delete()
+                if status == 1:
+                    self.list_autores.delete(0, "end")
+                    autores = autor.SelectAurotes()
+                    for autor in autores:
+                        self.list_autores.insert("end", autor[1]+" "+autor[2]+" "+autor[0])
+                    messagebox.showinfo("Exito", "Autor eliminado correctamente")
+                    self.entry_nombre.delete(0, "end")
+                    self.entry_apellido1.delete(0, "end")
+                    self.entry_apellido2.delete(0, "end")
+                    self.entry_nombre.master.focus_set()
+                    logging.info("Autor eliminado correctamente")
+        else:
+            messagebox.showerror("Error", "No se pueden dejar campos vacios")
+            if self.entry_nombre.get() == "":
+                self.entry_nombre.configure(highlightbackground="red")
+            if self.entry_apellido1.get() == "":
+                self.entry_apellido1.configure(highlightbackground="red")
+            if self.entry_apellido2.get() == "":
+                self.entry_apellido2.configure(highlightbackground="red")
+            logging.error("No se pueden dejar campos vacios")
+            self.entry_nombre.master.focus_set()
+            return
+    
+    def click_list_autores(self):
+        autor = self.list_autores.get(self.list_autores.curselection())
+        autor = autor.split(" ")
+        self.entry_nombre.delete(0, "end")
+        self.entry_apellido1.delete(0, "end")
+        self.entry_apellido2.delete(0, "end")
+        self.entry_nombre.insert(0, autor[2])
+        self.entry_apellido1.insert(0, autor[0])
+        self.entry_apellido2.insert(0, autor[1])
+        self.entry_nombre.master.focus_set()
+        logging.info("Autor seleccionado correctamente")
