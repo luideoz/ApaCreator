@@ -78,15 +78,15 @@ class IMain:
         self.lbl_apellido2.place(x=600, y=190)
         self.entry_apellido2 = Entry(self.frame_autores, font=(self.config["font-family"], self.config["entry-font-size"]), width=30)
         self.entry_apellido2.place(x=450, y=225)
-        self.btn_agregar_autor = Button(self.frame_autores, text="Agregar", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"], command=self.agregar_autor)
+        self.btn_agregar_autor = Button(self.frame_autores, text="Agregar", font=(self.config["font-family"],  self.config["btn-font-size"]),width=self.config["btn-size"],command=self.agregar_autor)
         self.btn_agregar_autor.place(x=500, y=300)
-        self.btn_eliminar_autor = Button(self.frame_autores, text="Eliminar", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"], command=self.eliminar_autor)
+        self.btn_eliminar_autor = Button(self.frame_autores, text="Eliminar", state="disabled",font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"], command=self.eliminar_autor)
         self.btn_eliminar_autor.place(x=500, y=350)
-        self.btn_reset_autor = Button(self.frame_autores, text="Reset", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"])
+        self.btn_reset_autor = Button(self.frame_autores, text="Reset", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"], command=self.reset_autores)
         self.btn_reset_autor.place(x=500, y=400)
-        self.btn_back = Button(self.frame_autores, text="Volver", font=(self.config["font-family"], self.config["btn-font-size"]), width=15)
+        self.btn_back = Button(self.frame_autores, text="Volver", font=(self.config["font-family"], self.config["btn-font-size"]), width=15, state="disabled")
         self.btn_back.place(x=350, y=500)
-        self.btn_next = Button(self.frame_autores, text="Siguiente", font=(self.config["font-family"], self.config["btn-font-size"]), width=15)
+        self.btn_next = Button(self.frame_autores, text="Siguiente", font=(self.config["font-family"], self.config["btn-font-size"]), width=15, state="disabled")
         self.btn_next.place(x=730, y=500)
 
         self.window.mainloop()
@@ -129,6 +129,8 @@ class IMain:
                 messagebox.showinfo("Exito", "Autor agregado correctamente")
                 """quitamos el foco de los entry"""
                 self.entry_nombre.master.focus_set()
+                self.btn_eliminar_autor.configure(state="active")
+                self.btn_next.configure(state="active")
                 logging.info("Autor agregado correctamente")
             else:
                 messagebox.showerror("Error", "No se pudo agregar el autor")
@@ -150,6 +152,8 @@ class IMain:
                     self.entry_apellido2.delete(0, "end")
                     messagebox.showinfo("Exito", "Autor eliminado correctamente")
                     self.entry_nombre.master.focus_set()
+                    self.btn_eliminar_autor.configure(state="disabled")
+                    self.btn_next.configure(state="disabled")
                     logging.info("Autor eliminado correctamente")
         else:
             messagebox.showerror("Error", "No se pueden dejar campos vacios")
@@ -172,5 +176,17 @@ class IMain:
         self.entry_nombre.insert(0, autor[2])
         self.entry_apellido1.insert(0, autor[0])
         self.entry_apellido2.insert(0, autor[1])
+        self.btn_eliminar_autor.configure(state="active")
+        self.btn_next.configure(state="active")
         self.entry_nombre.master.focus_set()
         logging.info("Autor seleccionado correctamente")
+    
+    def reset_autores(self):
+        if messagebox.askyesno("Reset", "¿Estas seguro de que quieres borrar todos los autores?"):
+            Autor("","","").reset()
+            self.list_autores.delete(0, "end")
+            self.entry_nombre.delete(0, "end")
+            self.entry_apellido1.delete(0, "end")
+            self.entry_apellido2.delete(0, "end")
+            messagebox.showinfo("Exito", "Autores eliminados correctamente")
+            self.entry_nombre.master.focus_set()

@@ -10,7 +10,10 @@ class DBManager:
         conn = sql.connect("BBDD/"+table+".db")
         cursor = conn.cursor()
         try:
-            cursor.execute(instruction,params)
+            if params != None:
+                cursor.execute(instruction,params)
+            else:
+                cursor.execute(instruction)
             conn.commit()
             conn.close()
             estado = 1

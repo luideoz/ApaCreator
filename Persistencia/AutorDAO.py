@@ -26,5 +26,5 @@ class AutorDAO:
     
     def reset(self) -> int:
         agent = DBManager()
-        state = agent.insert_delete_reset("autores", "DELETE FROM autores")
+        state = agent.insert_delete_reset("autores", "DELETE FROM autor", None)
         return state
