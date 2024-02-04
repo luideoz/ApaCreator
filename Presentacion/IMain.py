@@ -1,5 +1,6 @@
 from tkinter import Tk, PhotoImage, Label, Entry, Button, StringVar, W, E, N, S, Listbox, Frame
 from tkinter import ttk, messagebox
+from Dominio.Autor import Autor
 import logging
 import os
 
@@ -61,6 +62,9 @@ class IMain:
         self.frame_autores.place(x=0, y=0, width=1000, height=600)
         self.list_autores = Listbox(self.frame_autores, background=self.config["listbox-background-color"], font=(self.config["font-family"], self.config["font-size"]), width=30, height=25)
         self.list_autores.place(x=10, y=10)
+        autores = Autor("","","").SelectAurotes()
+        for autor in autores:
+            self.list_autores.insert("end", autor[1]+" "+autor[2]+" "+autor[0])
         self.lbl_nombre = Label(self.frame_autores, text="Nombre", background=self.config["background-color"], font=(self.config["font-family"], self.config["lbl-font-size"]), foreground=self.config["foreground"])
         self.lbl_nombre.place(x=600, y=10)
         self.entry_nombre = Entry(self.frame_autores, font=(self.config["font-family"], self.config["entry-font-size"]), width=30)
@@ -73,7 +77,7 @@ class IMain:
         self.lbl_apellido2.place(x=600, y=190)
         self.entry_apellido2 = Entry(self.frame_autores, font=(self.config["font-family"], self.config["entry-font-size"]), width=30)
         self.entry_apellido2.place(x=450, y=225)
-        self.btn_agregar_autor = Button(self.frame_autores, text="Agregar", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"])
+        self.btn_agregar_autor = Button(self.frame_autores, text="Agregar", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"], command=self.agregar_autor)
         self.btn_agregar_autor.place(x=500, y=300)
         self.btn_eliminar_autor = Button(self.frame_autores, text="Eliminar", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"])
         self.btn_eliminar_autor.place(x=500, y=350)
@@ -96,3 +100,35 @@ class IMain:
                 line[1].replace(" ","")
                 config[line[0]] = line[1][:len(line[1])-1]
         return config
+
+    def agregar_autor(self):
+        """primero miramos si los campos estan vacios"""
+        self.entry_nombre.configure(highlightbackground="black")
+        self.entry_apellido1.configure(highlightbackground="black")
+        self.entry_apellido2.configure(highlightbackground="black")
+        if self.entry_nombre.get() == "" or self.entry_apellido1.get() == "" or self.entry_apellido2.get() == "":
+            messagebox.showerror("Error", "No se pueden dejar campos vacios")
+            if self.entry_nombre.get() == "":
+                self.entry_nombre.configure(highlightbackground="red")
+            if self.entry_apellido1.get() == "":
+                self.entry_apellido1.configure(highlightbackground="red")
+            if self.entry_apellido2.get() == "":
+                self.entry_apellido2.configure(highlightbackground="red")
+            logging.error("No se pueden dejar campos vacios")
+            self.entry_nombre.master.focus_set()
+        else:
+            autor = Autor(self.entry_nombre.get(), self.entry_apellido1.get(), self.entry_apellido2.get())
+            """lo insertamos en la base de datos y si se inserta correctamente lo insertamos en la lista"""
+            status = autor.insert()
+            if status == 1:
+                self.list_autores.delete(0, "end")
+                autores = autor.SelectAurotes()
+                for autor in autores:
+                    self.list_autores.insert("end", autor[1]+" "+autor[2]+" "+autor[0])
+                messagebox.showinfo("Exito", "Autor agregado correctamente")
+                """quitamos el foco de los entry"""
+                self.entry_nombre.master.focus_set()
+                logging.info("Autor agregado correctamente")
+            else:
+                messagebox.showerror("Error", "No se pudo agregar el autor")
+                logging.error("No se pudo agregar el autor")

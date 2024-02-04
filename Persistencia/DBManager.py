@@ -2,14 +2,15 @@
 import sqlite3 as sql
 
 class DBManager:
-    def __init__():
+    
+    def __init__(self):
         pass
     
-    def insert_delete_reset(*args) -> int:
-        conn = sql.connect("BBDD/"+str(args[0]) + ".db")
+    def insert_delete_reset(self,table,instruction,params) -> int:
+        conn = sql.connect("BBDD/"+table+".db")
         cursor = conn.cursor()
         try:
-            cursor.execute(args[1])
+            cursor.execute(instruction,params)
             conn.commit()
             conn.close()
             estado = 1
@@ -27,10 +28,10 @@ class DBManager:
             estado = 0
         return estado
     
-    def select(*args) -> list:
-        conn = sql.connect("BBDD/"+str(args[0]) + ".db")
+    def select(self,table,instruction) -> list:
+        conn = sql.connect("BBDD/"+table+ ".db")
         cursor = conn.cursor()
-        cursor.execute(args[1])
+        cursor.execute(instruction)
         rows = cursor.fetchall()
         conn.close()
         return rows

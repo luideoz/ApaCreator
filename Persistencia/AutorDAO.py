@@ -6,22 +6,25 @@ class AutorDAO:
         
     def SelectAurotes(self) -> list:
         agent = DBManager()
-        autores = agent.select("autores", "SELECT * FROM autores")
+        autores = agent.select("autores", "SELECT * FROM autor ORDER BY apellido1, apellido2, nombre")
         return autores
     
-    def SelectAutor(self,*args) -> list:
+    def SelectAutor(self,nombre,apellido1,apellido2) -> list:
         agent = DBManager()
-        autor = agent.select("autores", "SELECT * FROM autores WHERE nombre = '"+str(args[0])+"' AND apellido1 = '"+str(args[1])+"' AND apellido2 = '"+str(args[2])+"'")
+        autor = agent.select("autores", "SELECT * FROM autores WHERE nombre = '"+nombre+"' AND apellido1 = '"+apellido1+"' AND apellido2 = '"+apellido2+"'")
         return autor
     
-    def insert(self,*args) -> int:
+    def insert(self,nombre,apellido1,apellido2) -> int:
         agent = DBManager()
-        state = agent.insert_delete_reset("autores", "INSERT INTO autores (nombre, apellido1, apellido2) VALUES ('"+str(args[0])+"','"+str(args[1])+'","'+str(args[2])+"',")
+        state = agent.insert_delete_reset("autores", "INSERT INTO autor (nombre, apellido1, apellido2) VALUES (?, ?, ?)", (nombre, apellido1, apellido2))
+        return state
         
-    def delete(self,*args) -> int:
+    def delete(self,nombre,apellido1,apellido2) -> int:
         agent = DBManager()
-        state = agent.insert_delete_reset("autores", "DELETE FROM autores WHERE nombre = '"+str(args[0])+"' AND apellido1 = '"+str(args[1])+"' AND apellido2 = '"+str(args[2])+"'")
+        state = agent.insert_delete_reset("autores", "DELETE FROM autores WHERE nombre = '"+nombre+"' AND apellido1 = '"+apellido1+"' AND apellido2 = '"+apellido2+"'")
+        return state
     
     def reset(self) -> int:
         agent = DBManager()
         state = agent.insert_delete_reset("autores", "DELETE FROM autores")
+        return state
