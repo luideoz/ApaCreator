@@ -27,6 +27,6 @@ class EditorialDAO:
 
     def reset(self) -> int:
         agent = DBManager()
-        state = agent.insert_delete_reset("editoriales", "DELETE FROM editoriales")
+        state = agent.insert_delete_reset("editoriales", "DELETE FROM editoriales", None)
         return state
     

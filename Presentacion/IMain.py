@@ -110,7 +110,7 @@ class IMain:
         self.btn_agregar_editorial.place(x=500, y=300)
         self.btn_eliminar_editorial = Button(self.frame_editorial, text="Eliminar",state="disabled", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"], command=self.eliinar_editorial)
         self.btn_eliminar_editorial.place(x=500, y=350)
-        self.btn_reset_editorial = Button(self.frame_editorial, text="Reset", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"])
+        self.btn_reset_editorial = Button(self.frame_editorial, text="Reset", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"], command=self.reset_editorial)
         self.btn_reset_editorial.place(x=500, y=400)
         self.btn_back_editorial = Button(self.frame_editorial, text="Volver", font=(self.config["font-family"], self.config["btn-font-size"]), width=15, command=self.back_tab_autores)
         self.btn_back_editorial.place(x=350, y=500)
@@ -308,3 +308,11 @@ class IMain:
                 messagebox.showerror("Error", "No se pudo eliminar la editorial")
                 logging.error("No se pudo eliminar la editorial")
                 self.entry_editorial_nombre.master.focus_set()
+    
+    def reset_editorial(self):
+        if messagebox.askyesno("Reset", "¿Estas seguro de que quieres borrar todas las editoriales?"):
+            Editorial("").reset()
+            self.list_editorial.delete(0, "end")
+            self.entry_editorial_nombre.delete(0, "end")
+            messagebox.showinfo("Exito", "Editoriales eliminadas correctamente")
+            self.entry_editorial_nombre.master.focus_set()
