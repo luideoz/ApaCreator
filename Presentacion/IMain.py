@@ -1,12 +1,16 @@
 from tkinter import Tk, PhotoImage, Label, Entry, Button, StringVar, W, E, N, S, Listbox, Frame
 from tkinter import ttk, messagebox
 from Dominio.Autor import Autor
+from Dominio.Editorial import Editorial
 import logging
 import os
 
 class IMain:
     def __init__(self):
         self.config = self.load_config()
+        self.autor_cita = []
+        self.editorial_cita = None
+        self.articulo_cita = None
         if not os.path.isdir("Logs"):
             os.mkdir("Logs")
 
@@ -60,7 +64,7 @@ class IMain:
         """FRAME DE AUTORES"""
         self.frame_autores = Frame(self.tab_autores, background=self.config["background-color"])
         self.frame_autores.place(x=0, y=0, width=1000, height=600)
-        self.list_autores = Listbox(self.frame_autores, background=self.config["listbox-background-color"], font=(self.config["font-family"], self.config["font-size"]), width=30, height=25)
+        self.list_autores = Listbox(self.frame_autores,selectmode='multiple', background=self.config["listbox-background-color"], font=(self.config["font-family"], self.config["font-size"]), width=30, height=25)
         self.list_autores.place(x=10, y=10)
         self.list_autores.bind("<<ListboxSelect>>", lambda x: self.click_list_autores())
         autores = Autor("","","").SelectAurotes()
@@ -86,8 +90,32 @@ class IMain:
         self.btn_reset_autor.place(x=500, y=400)
         self.btn_back = Button(self.frame_autores, text="Volver", font=(self.config["font-family"], self.config["btn-font-size"]), width=15, state="disabled")
         self.btn_back.place(x=350, y=500)
-        self.btn_next = Button(self.frame_autores, text="Siguiente", font=(self.config["font-family"], self.config["btn-font-size"]), width=15, state="disabled")
+        self.btn_next = Button(self.frame_autores, text="Siguiente", font=(self.config["font-family"], self.config["btn-font-size"]), width=15, state="disabled", command=self.next_tab_autores)
         self.btn_next.place(x=730, y=500)
+
+        """FRAME DE EDITORIAL"""
+        self.frame_editorial = Frame(self.tab_editorial, background=self.config["background-color"])
+        self.frame_editorial.place(x=0, y=0, width=1000, height=600)
+        self.list_editorial = Listbox(self.frame_editorial, background=self.config["listbox-background-color"], font=(self.config["font-family"], self.config["font-size"]), width=30, height=25)
+        self.list_editorial.place(x=10, y=10)
+        editoriales = Editorial("").SelectEditoriales()
+        for editorial in editoriales:
+            self.list_editorial.insert("end", editorial[0])
+        self.list_editorial.bind("<<ListboxSelect>>", lambda x: self.click_list_editorial())
+        self.lbl_editorial_nombre = Label(self.frame_editorial, text="Nombre", background=self.config["background-color"], font=(self.config["font-family"], self.config["lbl-font-size"]), foreground=self.config["foreground"])
+        self.lbl_editorial_nombre.place(x=600, y=10)
+        self.entry_editorial_nombre = Entry(self.frame_editorial, font=(self.config["font-family"], self.config["entry-font-size"]), width=30)
+        self.entry_editorial_nombre.place(x=450, y=45)
+        self.btn_agregar_editorial = Button(self.frame_editorial, text="Agregar", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"], command=self.agregar_editorial)
+        self.btn_agregar_editorial.place(x=500, y=300)
+        self.btn_eliminar_editorial = Button(self.frame_editorial, text="Eliminar",state="disabled", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"], command=self.eliinar_editorial)
+        self.btn_eliminar_editorial.place(x=500, y=350)
+        self.btn_reset_editorial = Button(self.frame_editorial, text="Reset", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"])
+        self.btn_reset_editorial.place(x=500, y=400)
+        self.btn_back_editorial = Button(self.frame_editorial, text="Volver", font=(self.config["font-family"], self.config["btn-font-size"]), width=15, command=self.back_tab_autores)
+        self.btn_back_editorial.place(x=350, y=500)
+        self.btn_next_editorial = Button(self.frame_editorial, text="Siguiente", font=(self.config["font-family"],self.config["btn-font-size"]), state="disabled",width=15)
+        self.btn_next_editorial.place(x=730, y=500)
 
         self.window.mainloop()
 
@@ -107,7 +135,8 @@ class IMain:
         self.entry_nombre.configure(highlightbackground="black")
         self.entry_apellido1.configure(highlightbackground="black")
         self.entry_apellido2.configure(highlightbackground="black")
-        if self.entry_nombre.get() == "" or self.entry_apellido1.get() == "" or self.entry_apellido2.get() == "":
+        selected_indices = self.list_autores.curselection()
+        if self.entry_nombre.get() == "" or self.entry_apellido1.get() == "" or self.entry_apellido2.get() == "" and len(selected_indices) == 1:
             messagebox.showerror("Error", "No se pueden dejar campos vacios")
             if self.entry_nombre.get() == "":
                 self.entry_nombre.configure(highlightbackground="red")
@@ -168,18 +197,35 @@ class IMain:
             return
     
     def click_list_autores(self):
-        autor = self.list_autores.get(self.list_autores.curselection())
-        autor = autor.split(" ")
-        self.entry_nombre.delete(0, "end")
-        self.entry_apellido1.delete(0, "end")
-        self.entry_apellido2.delete(0, "end")
-        self.entry_nombre.insert(0, autor[2])
-        self.entry_apellido1.insert(0, autor[0])
-        self.entry_apellido2.insert(0, autor[1])
-        self.btn_eliminar_autor.configure(state="active")
-        self.btn_next.configure(state="active")
-        self.entry_nombre.master.focus_set()
-        logging.info("Autor seleccionado correctamente")
+        indexes = self.list_autores.curselection()
+        if len(indexes) != 0:
+            selected_indices = self.list_autores.curselection()
+            selected_items = [self.list_autores.get(i) for i in selected_indices]
+            nombres = ""
+            apellido1 = ""
+            apellido2 = ""
+            for item in selected_items:
+                item = item.split(" ")
+                nombres = nombres + item[2] + " "
+                apellido1 = apellido1 + item[0] + " "
+                apellido2 = apellido2 + item[1] + " "
+            self.entry_nombre.delete(0, "end")
+            self.entry_nombre.insert(0, nombres)
+            self.entry_apellido1.delete(0, "end")
+            self.entry_apellido1.insert(0, apellido1)
+            self.entry_apellido2.delete(0, "end")
+            self.entry_apellido2.insert(0, apellido2)
+            self.btn_eliminar_autor.configure(state="active")
+            self.btn_next.configure(state="active")
+            self.entry_nombre.master.focus_set()
+            logging.info("Autor seleccionado correctamente")
+
+        else:
+            self.btn_eliminar_autor.configure(state="disabled")
+            self.btn_next.configure(state="disabled")
+            self.entry_nombre.delete(0, "end")
+            self.entry_apellido1.delete(0, "end")
+            self.entry_apellido2.delete(0, "end")
     
     def reset_autores(self):
         if messagebox.askyesno("Reset", "¿Estas seguro de que quieres borrar todos los autores?"):
@@ -190,3 +236,75 @@ class IMain:
             self.entry_apellido2.delete(0, "end")
             messagebox.showinfo("Exito", "Autores eliminados correctamente")
             self.entry_nombre.master.focus_set()
+    
+    def next_tab_autores(self):
+        self.autor_cita = []
+        selected_indices = self.list_autores.curselection()
+        if len(selected_indices) == 0:
+            messagebox.showerror("Error", "Debes seleccionar al menos un autor")
+            logging.error("Debes seleccionar al menos un autor")
+            return
+        else:
+            selected_items = [self.list_autores.get(i) for i in selected_indices]
+            for i in selected_items:
+                i = i.split(" ")
+                autor = Autor(i[2], i[0], i[1])
+                self.autor_cita.append(autor)
+        self.tab_control.select(self.tab_editorial)
+        logging.info("Pestaña siguiente seleccionada correctamente")
+    
+    def agregar_editorial(self):
+        if self.entry_editorial_nombre.get() != "":
+            editorial = Editorial(self.entry_editorial_nombre.get())
+            status = editorial.insert()
+            if status == 1:
+                self.list_editorial.delete(0, "end")
+                editoriales = editorial.SelectEditoriales()
+                for editorial in editoriales:
+                    self.list_editorial.insert("end", editorial[0])
+                messagebox.showinfo("Exito", "Editorial agregada correctamente")
+                self.entry_editorial_nombre.master.focus_set()
+                logging.info("Editorial agregada correctamente")
+        else:
+            messagebox.showerror("Error", "No se pueden dejar campos vacios")
+            self.entry_editorial_nombre.configure(highlightbackground="red")
+            logging.error("No se pueden dejar campos vacios")
+            self.entry_editorial_nombre.master.focus_set()
+    
+    def click_list_editorial(self):
+        if self.list_editorial.curselection() == ():
+            self.btn_eliminar_editorial.configure(state="disabled")
+            self.btn_next_editorial.configure(state="disabled")
+            self.entry_editorial_nombre.delete(0, "end")
+            return
+        else:
+            editorial = self.list_editorial.get(self.list_editorial.curselection())
+            self.entry_editorial_nombre.delete(0, "end")
+            self.entry_editorial_nombre.insert(0, editorial)
+            self.btn_eliminar_editorial.configure(state="active")
+            self.btn_next_editorial.configure(state="active")
+            self.entry_editorial_nombre.master.focus_set()
+
+    def back_tab_autores(self):
+        self.tab_control.select(self.tab_autores)
+        logging.info("Pestaña anterior seleccionada correctamente")
+    
+    def eliinar_editorial(self):
+        if messagebox.askyesno("Eliminar", "¿Estas seguro de que quieres eliminar esta editorial?"):
+            editorial = Editorial(self.entry_editorial_nombre.get())
+            status = editorial.delete()
+            if status == 1:
+                self.list_editorial.delete(0, "end")
+                editoriales = editorial.SelectEditoriales()
+                for editorial in editoriales:
+                    self.list_editorial.insert("end", editorial[0])
+                self.entry_editorial_nombre.delete(0, "end")
+                messagebox.showinfo("Exito", "Editorial eliminada correctamente")
+                self.entry_editorial_nombre.master.focus_set()
+                self.btn_eliminar_editorial.configure(state="disabled")
+                self.btn_next_editorial.configure(state="disabled")
+                logging.info("Editorial eliminada correctamente")
+            else:
+                messagebox.showerror("Error", "No se pudo eliminar la editorial")
+                logging.error("No se pudo eliminar la editorial")
+                self.entry_editorial_nombre.master.focus_set()

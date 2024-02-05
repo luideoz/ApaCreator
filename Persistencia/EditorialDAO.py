@@ -15,14 +15,14 @@ class EditorialDAO:
         editorial = agent.select("editoriales", "SELECT * FROM editoriales WHERE nombre = '"+str(args[0])+"'")
         return editorial
     
-    def insert(self,*args) -> int:
+    def insert(self, nombre) -> int:
         agent = DBManager()
-        state = agent.insert_delete_reset("editoriales", "INSERT INTO editoriales (nombre) VALUES ('"+str(args[0])+"')")
+        state = agent.insert_delete_reset("editoriales", "INSERT INTO editoriales (nombre) VALUES ('"+nombre+"')", None)
         return state
 
-    def delete(self,*args) -> int:
+    def delete(self,nombre) -> int:
         agent = DBManager()
-        state = agent.insert_delete_reset("editoriales", "DELETE FROM editoriales WHERE nombre = '"+str(args[0])+"'")
+        state = agent.insert_delete_reset("editoriales", "DELETE FROM editoriales WHERE nombre = '"+nombre+"'", None)
         return state
 
     def reset(self) -> int:
