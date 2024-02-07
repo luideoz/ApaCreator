@@ -6,12 +6,12 @@ class AutorDAO:
         
     def SelectAurotes(self) -> list:
         agent = DBManager()
-        autores = agent.select("autores", "SELECT * FROM autor ORDER BY apellido1, apellido2, nombre")
+        autores = agent.select("autores", "SELECT * FROM autor ORDER BY apellido1, apellido2, nombre", None)
         return autores
     
     def SelectAutor(self,nombre,apellido1,apellido2) -> list:
         agent = DBManager()
-        autor = agent.select("autores", "SELECT * FROM autores WHERE nombre = '"+nombre+"' AND apellido1 = '"+apellido1+"' AND apellido2 = '"+apellido2+"'")
+        autor = agent.select("autores", "SELECT * FROM autores WHERE nombre = '"+nombre+"' AND apellido1 = '"+apellido1+"' AND apellido2 = '"+apellido2+"'", None)
         return autor
     
     def insert(self,nombre,apellido1,apellido2) -> int:

@@ -7,12 +7,12 @@ class EditorialDAO:
     
     def SelectEditoriales(self) -> list:
         agent = DBManager()
-        editoriales = agent.select("editoriales", "SELECT * FROM editoriales")
+        editoriales = agent.select("editoriales", "SELECT * FROM editoriales", None)
         return editoriales
 
     def SelectEditorial(self,*args) -> list:
         agent = DBManager()
-        editorial = agent.select("editoriales", "SELECT * FROM editoriales WHERE nombre = '"+str(args[0])+"'")
+        editorial = agent.select("editoriales", "SELECT * FROM editoriales WHERE nombre = '"+str(args[0])+"'", None)
         return editorial
     
     def insert(self, nombre) -> int:

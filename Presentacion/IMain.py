@@ -2,6 +2,7 @@ from tkinter import Tk, PhotoImage, Label, Entry, Button, StringVar, W, E, N, S,
 from tkinter import ttk, messagebox
 from Dominio.Autor import Autor
 from Dominio.Editorial import Editorial
+from Dominio.Articulo import Articulo
 import logging
 import os
 
@@ -114,8 +115,41 @@ class IMain:
         self.btn_reset_editorial.place(x=500, y=400)
         self.btn_back_editorial = Button(self.frame_editorial, text="Volver", font=(self.config["font-family"], self.config["btn-font-size"]), width=15, command=self.back_tab_autores)
         self.btn_back_editorial.place(x=350, y=500)
-        self.btn_next_editorial = Button(self.frame_editorial, text="Siguiente", font=(self.config["font-family"],self.config["btn-font-size"]), state="disabled",width=15)
+        self.btn_next_editorial = Button(self.frame_editorial, text="Siguiente", font=(self.config["font-family"],self.config["btn-font-size"]), state="disabled",width=15, command=self.next_tab_editoriak)
         self.btn_next_editorial.place(x=730, y=500)
+
+        """FRAME DE ARTICULOS"""
+        self.frame_articulos = Frame(self.tab_articulos, background=self.config["background-color"])
+        self.frame_articulos.place(x=0, y=0, width=1000, height=600)
+        self.list_articulos = Listbox(self.frame_articulos, background=self.config["listbox-background-color"], font=(self.config["font-family"], self.config["font-size"]), width=30, height=25)
+        self.list_articulos.place(x=10, y=10)
+        self.load_articulos_de_autores()
+        self.lbl_articulo_nombre = Label(self.frame_articulos, text="Nombre", background=self.config["background-color"], font=(self.config["font-family"], self.config["lbl-font-size"]), foreground=self.config["foreground"])
+        self.lbl_articulo_nombre.place(x=600, y=10)
+        self.entry_articulo_nombre = Entry(self.frame_articulos, font=(self.config["font-family"], self.config["entry-font-size"]), width=30)
+        self.entry_articulo_nombre.place(x=450, y=45)
+        self.lbl_articulo_ano = Label(self.frame_articulos, text="Año", background=self.config["background-color"], font=(self.config["font-family"], self.config["lbl-font-size"]), foreground=self.config["foreground"])
+        self.lbl_articulo_ano.place(x=600, y=100)
+        self.entry_articulo_ano = Entry(self.frame_articulos, font=(self.config["font-family"], self.config["entry-font-size"]), width=30)
+        self.entry_articulo_ano.place(x=450, y=135)
+        self.lbl_articulo_lugar = Label(self.frame_articulos, text="Lugar", background=self.config["background-color"], font=(self.config["font-family"], self.config["lbl-font-size"]), foreground=self.config["foreground"])
+        self.lbl_articulo_lugar.place(x=600, y=190)
+        self.entry_articulo_lugar = Entry(self.frame_articulos, font=(self.config["font-family"], self.config["entry-font-size"]), width=30)
+        self.entry_articulo_lugar.place(x=450, y=225)
+        self.lbl_numero = Label(self.frame_articulos, text="Numero", background=self.config["background-color"], font=(self.config["font-family"], self.config["lbl-font-size"]), foreground=self.config["foreground"])
+        self.lbl_numero.place(x=600, y=280)
+        self.entry_numero = Entry(self.frame_articulos, font=(self.config["font-family"], self.config["entry-font-size"]), width=30)
+        self.entry_numero.place(x=450, y=315)
+        self.btn_agregar_articulo = Button(self.frame_articulos, text="Agregar", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"])
+        self.btn_agregar_articulo.place(x=500, y=370)
+        self.btn_eliminar_articulo = Button(self.frame_articulos, text="Eliminar", state="disabled", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"])
+        self.btn_eliminar_articulo.place(x=500, y=420)
+        self.btn_reset_articulo = Button(self.frame_articulos, text="Reset", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"])
+        self.btn_reset_articulo.place(x=500, y=470)
+        self.btn_back_articulo = Button(self.frame_articulos, text="Volver", font=(self.config["font-family"], self.config["btn-font-size"]), width=15)
+        self.btn_back_articulo.place(x=350, y=520)
+        self.btn_next_articulo = Button(self.frame_articulos, text="Siguiente",  state="disabled",font=(self.config["font-family"], self.config["btn-font-size"]), width=15)
+        self.btn_next_articulo.place(x=730, y=520)
 
         self.window.mainloop()
 
@@ -316,3 +350,36 @@ class IMain:
             self.entry_editorial_nombre.delete(0, "end")
             messagebox.showinfo("Exito", "Editoriales eliminadas correctamente")
             self.entry_editorial_nombre.master.focus_set()
+    
+    def next_tab_editoriak(self):
+        self.editorial_cita = Editorial(self.entry_editorial_nombre.get())
+        self.tab_control.select(self.tab_articulos)
+    
+    def load_articulos_de_autores(self):
+        """primero, miramos la longitud de la lista de autores"""
+        articulos_definitivos = []
+        if len(self.autor_cita) == 1:
+            articulos = Articulo("", "", "", "", "", "").select_articulo_nombre(self.autor_cita[0].nombre, self.autor_cita[0].apellido1, self.autor_cita[0].apellido2,self.editorial_cita.nombre)
+            self.list_articulos.delete(0, "end")
+            for articulo in articulos:
+                self.list_articulos.insert("end", articulo[0])
+        else:
+            """cogemos los articulos del autor que seleccionemos, los guardamos en una lista y los comparamos con los demas autores"""
+            for autor in self.autor_cita:
+                articulos = Articulo("", "", "", "", "", "").select_articulo_nombre(autor.nombre, autor.apellido1, autor.apellido2,self.editorial_cita.nombre)
+                """ahora miramos, si esta vacia la lista los metemos todos, si no estan, solo nos quedaremos con los comunes en la lista definitiva"""
+                if articulos_definitivos == []:
+                    """guardamos los nombres de los articulos en la lista"""
+                    for articulo in articulos:
+                        articulos_definitivos.append(articulo[0])
+                else:
+                    """guardamos en una lista temporal los articulos de este autor y en la lista defintiva nos quedamos con los articulos que esten en ambas listas"""
+                    articulos_temporales = []
+                    for articulo in articulos:
+                        articulos_temporales.append(articulo[0])
+                    articulos_definitivos = list(set(articulos_definitivos) & set(articulos_temporales))
+
+            self.list_articulos.delete(0, "end")
+            for articulo in articulos_definitivos:
+                self.list_articulos.insert("end", articulo)
+

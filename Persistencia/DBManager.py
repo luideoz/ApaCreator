@@ -31,10 +31,13 @@ class DBManager:
             estado = 0
         return estado
     
-    def select(self,table,instruction) -> list:
+    def select(self,table,instruction,params) -> list:
         conn = sql.connect("BBDD/"+table+ ".db")
         cursor = conn.cursor()
-        cursor.execute(instruction)
+        if params == None:
+            cursor.execute(instruction)
+        else:
+            cursor.execute(instruction,params)
         rows = cursor.fetchall()
         conn.close()
         return rows
