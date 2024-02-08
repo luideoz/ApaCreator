@@ -7,26 +7,26 @@ class EditorialDAO:
     
     def SelectEditoriales(self) -> list:
         agent = DBManager()
-        editoriales = agent.select("editoriales", "SELECT * FROM editoriales", None)
+        editoriales = agent.select("articulos", "SELECT * FROM editoriales", None)
         return editoriales
 
     def SelectEditorial(self,*args) -> list:
         agent = DBManager()
-        editorial = agent.select("editoriales", "SELECT * FROM editoriales WHERE nombre = '"+str(args[0])+"'", None)
+        editorial = agent.select("articulos", "SELECT * FROM editoriales WHERE nombre = '"+str(args[0])+"'", None)
         return editorial
     
     def insert(self, nombre) -> int:
         agent = DBManager()
-        state = agent.insert_delete_reset("editoriales", "INSERT INTO editoriales (nombre) VALUES ('"+nombre+"')", None)
+        state = agent.insert_delete_reset("articulos", "INSERT INTO editoriales (nombre) VALUES ('"+nombre+"')", None)
         return state
 
     def delete(self,nombre) -> int:
         agent = DBManager()
-        state = agent.insert_delete_reset("editoriales", "DELETE FROM editoriales WHERE nombre = '"+nombre+"'", None)
+        state = agent.insert_delete_reset("articulos", "DELETE FROM editoriales WHERE nombre = '"+nombre+"'", None)
         return state
 
     def reset(self) -> int:
         agent = DBManager()
-        state = agent.insert_delete_reset("editoriales", "DELETE FROM editoriales", None)
+        state = agent.insert_delete_reset("articulos", "DELETE FROM editoriales", None)
         return state
     
