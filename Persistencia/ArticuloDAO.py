@@ -15,6 +15,11 @@ class ArticuloDAO:
         db = DBManager()
         query = "SELECT * from articulos"
         return db.select("articulos",query,None)
+    
+    def select_articulo(self,nombre):
+        db = DBManager()
+        query = "SELECT * from articulos WHERE nombre = '"+nombre+"' "
+        return db.select("articulos",query, None)
 
     def insert_articulo(self,nombre,lugar,numero,ano,editorial):
         db = DBManager()
@@ -37,3 +42,15 @@ class ArticuloDAO:
         db = DBManager()
         query = "DELETE FROM articulos_autor"
         return db.insert_delete_reset("articulos",query,None)
+    
+    def delete_articulo(self,nombre):
+        db = DBManager()
+        query = "DELETE FROM articulos WHERE nombre = ?"
+        values = (nombre)
+        return db.insert_delete_reset("articulos",query, values)
+    
+    def delete_articulo_autor(self,nombre,nombreA,apellido1A,apellido2A):
+        db = DBManager()
+        query = "DELETE FROM articulos_autor WHERE nombre = ? AND nombreA = ? AND apellido1A = ? AND apellido2A = ?"
+        values = (nombre,nombreA,apellido1A,apellido2A)
+        return db.insert_delete_reset("articulos",query, values)

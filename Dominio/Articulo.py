@@ -21,11 +21,20 @@ class Articulo:
     def select_articulos(self):
         return self.articuloDAO.select_articulos()
     
+    def select_articulo(self):
+        return self.articuloDAO.select_articulo(self.nombre)
+    
     def reset_articulo(self):
         return self.articuloDAO.reset_articulos()
     
     def reset_aritulo_autor(self):
         return self.articuloDAO.reset_articulos_autor()
+    
+    def delete_articulo(self):
+        return self.articuloDAO.delete_articulo(self.nombre)
+    
+    def delete_articulo_autor(self,nombreA,apellido1A,apellido2A):
+        return self.articuloDAO.delete_articulo_autor(self.nombre,nombreA,apellido1A,apellido2A)
     
 
     

@@ -124,6 +124,7 @@ class IMain:
         self.list_articulos = Listbox(self.frame_articulos, background=self.config["listbox-background-color"], font=(self.config["font-family"], self.config["font-size"]), width=30, height=25)
         self.list_articulos.place(x=10, y=10)
         self.load_articulos_de_autores()
+        self.list_articulos.bind("<<ListboxSelect>>", lambda x: self.click_articulo())
         self.lbl_articulo_nombre = Label(self.frame_articulos, text="Nombre", background=self.config["background-color"], font=(self.config["font-family"], self.config["lbl-font-size"]), foreground=self.config["foreground"])
         self.lbl_articulo_nombre.place(x=600, y=10)
         self.entry_articulo_nombre = Entry(self.frame_articulos, font=(self.config["font-family"], self.config["entry-font-size"]), width=30)
@@ -142,7 +143,7 @@ class IMain:
         self.entry_numero.place(x=450, y=315)
         self.btn_agregar_articulo = Button(self.frame_articulos, text="Agregar", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"], command=self.agregar_articulo)
         self.btn_agregar_articulo.place(x=500, y=370)
-        self.btn_eliminar_articulo = Button(self.frame_articulos, text="Eliminar", state="disabled", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"])
+        self.btn_eliminar_articulo = Button(self.frame_articulos, text="Eliminar", state="disabled", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"],command=self.delete_articulo)
         self.btn_eliminar_articulo.place(x=500, y=420)
         self.btn_reset_articulo = Button(self.frame_articulos, text="Reset", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"],command=self.reset_articulos)
         self.btn_reset_articulo.place(x=500, y=470)
@@ -443,3 +444,42 @@ class IMain:
                     messagebox.showerror("Resetear","Fallo en el reseteo")
             else:
                 messagebox.showerror("Resetear","Fallo en el reseteo")
+    
+    def delete_articulo(self):
+        if messagebox.askyesno("Eliminar","¿Estas seguro de eliminar este articulo?"):
+            articulo = Articulo(self.entry_articulo_nombre.get(),self.entry_articulo_ano.get(),self.entry_articulo_lugar.get(),self.editorial_cita,self.entry_numero.get())
+            status = articulo.delete_articulo()
+            if status == 1:
+                for autor in self.autor_cita:
+                    status = articulo.delete_articulo_autor(articulo.nombre,autor.nombre,autor.apellido,autor.apellido2)
+                    if status == 1:
+                        pass
+                    else:
+                        messagebox.showerror("Eliminar","No se pudo eliminar el articulo")
+                        return
+                self.load_articulos_de_autores()
+                self.entry_articulo_nombre.delete(0, "end")
+                self.entry_articulo_ano.delete(0, "end")
+                self.entry_articulo_lugar.delete(0, "end")
+                self.entry_numero.delete(0, "end")
+                self.entry_articulo_nombre.master.focus_set()
+                messagebox.showinfo("Eliminar","Articulo eliminado correctamente")
+
+            else:
+                messagebox.showerror("Eliminar","No se pudo eliminar el articulo")
+    
+    def click_articulo(self):
+        articulo = Articulo(self.list_articulos.get(self.list_articulos.curselection()[0]),"","","","").select_articulo()
+        self.entry_articulo_nombre.delete(0, "end")
+        self.entry_articulo_nombre.insert(0, articulo[0][0])
+        self.entry_articulo_ano.delete(0, "end")
+        self.entry_articulo_ano.insert(0, articulo[0][1])
+        self.entry_articulo_lugar.delete(0, "end")
+        self.entry_articulo_lugar.insert(0, articulo[0][2])
+        self.entry_numero.delete(0, "end")
+        self.entry_numero.insert(0, articulo[0][3])
+        self.btn_eliminar_articulo.configure(state="active")
+        self.btn_next_articulo.configure(state="active")
+        self.entry_articulo_nombre.master.focus_set()
+
+        
