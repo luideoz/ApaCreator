@@ -204,21 +204,30 @@ class IMain:
     def eliminar_autor(self):
         if self.entry_nombre.get() != "" and self.entry_apellido1.get() != "" and self.entry_apellido2.get() != "":
             if messagebox.askyesno("Eliminar", "¿Estas seguro de que quieres eliminar este autor?"):
-                autor = Autor(self.entry_nombre.get(), self.entry_apellido1.get(), self.entry_apellido2.get())
-                status = autor.delete()
-                if status == 1:
-                    self.list_autores.delete(0, "end")
-                    autores = autor.SelectAurotes()
-                    for autor in autores:
-                        self.list_autores.insert("end", autor[1]+" "+autor[2]+" "+autor[0])
-                    self.entry_nombre.delete(0, "end")
-                    self.entry_apellido1.delete(0, "end")
-                    self.entry_apellido2.delete(0, "end")
-                    messagebox.showinfo("Exito", "Autor eliminado correctamente")
-                    self.entry_nombre.master.focus_set()
-                    self.btn_eliminar_autor.configure(state="disabled")
-                    self.btn_next.configure(state="disabled")
-                    logging.info("Autor eliminado correctamente")
+                selected_indices = self.list_autores.curselection()
+                selected_items = [self.list_autores.get(i) for i in selected_indices]
+                for item in selected_items:
+                    item = item.split(" ")
+                    autor = Autor(item[2], item[0], item[1])
+                    status = autor.delete()
+                    if status == 1:
+                        self.list_autores.delete(0, "end")
+                        autores = autor.SelectAurotes()
+                        for autor in autores:
+                            self.list_autores.insert("end", autor[1]+" "+autor[2]+" "+autor[0])
+                        self.entry_nombre.delete(0, "end")
+                        self.entry_apellido1.delete(0, "end")
+                        self.entry_apellido2.delete(0, "end")
+                        self.btn_eliminar_autor.configure(state="disabled")
+                        self.btn_next.configure(state="disabled")
+                        self.entry_nombre.master.focus_set()
+                        logging.info("Autor eliminado correctamente")
+                    else:
+                        messagebox.showerror("Error", "No se pudo eliminar el autor")
+                        logging.error("No se pudo eliminar el autor")
+                        self.entry_nombre.master.focus_set()
+                        return
+                messagebox.showinfo("Exito", "Autor eliminado correctamente")
         else:
             messagebox.showerror("Error", "No se pueden dejar campos vacios")
             if self.entry_nombre.get() == "":
