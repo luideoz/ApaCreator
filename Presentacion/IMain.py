@@ -140,11 +140,11 @@ class IMain:
         self.lbl_numero.place(x=600, y=280)
         self.entry_numero = Entry(self.frame_articulos, font=(self.config["font-family"], self.config["entry-font-size"]), width=30)
         self.entry_numero.place(x=450, y=315)
-        self.btn_agregar_articulo = Button(self.frame_articulos, text="Agregar", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"])
+        self.btn_agregar_articulo = Button(self.frame_articulos, text="Agregar", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"], command=self.agregar_articulo)
         self.btn_agregar_articulo.place(x=500, y=370)
         self.btn_eliminar_articulo = Button(self.frame_articulos, text="Eliminar", state="disabled", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"])
         self.btn_eliminar_articulo.place(x=500, y=420)
-        self.btn_reset_articulo = Button(self.frame_articulos, text="Reset", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"])
+        self.btn_reset_articulo = Button(self.frame_articulos, text="Reset", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"],command=self.reset_articulos)
         self.btn_reset_articulo.place(x=500, y=470)
         self.btn_back_articulo = Button(self.frame_articulos, text="Volver", font=(self.config["font-family"], self.config["btn-font-size"]), width=15)
         self.btn_back_articulo.place(x=350, y=520)
@@ -354,32 +354,92 @@ class IMain:
     def next_tab_editoriak(self):
         self.editorial_cita = Editorial(self.entry_editorial_nombre.get())
         self.tab_control.select(self.tab_articulos)
+        self.load_articulos_de_autores()
     
     def load_articulos_de_autores(self):
-        """primero, miramos la longitud de la lista de autores"""
-        articulos_definitivos = []
+        """guardamos todos los nombres de los articulos en una lista"""
+        articulos_nombre = []
+        conteo_repeticiones = {}
         if len(self.autor_cita) == 1:
-            articulos = Articulo("", "", "", "", "", "").select_articulo_nombre(self.autor_cita[0].nombre, self.autor_cita[0].apellido1, self.autor_cita[0].apellido2,self.editorial_cita.nombre)
-            self.list_articulos.delete(0, "end")
+            articulos = Articulo("","","","","").select_articulo_nombre(self.autor_cita[0].nombre,self.autor_cita[0].apellido,self.autor_cita[0].apellido2,self.editorial_cita.getNombre())
+            self.list_articulos.delete(0,"end")
             for articulo in articulos:
-                self.list_articulos.insert("end", articulo[0])
-        else:
-            """cogemos los articulos del autor que seleccionemos, los guardamos en una lista y los comparamos con los demas autores"""
+                self.list_articulos.insert("end",articulo[0])
+        elif len(self.autor_cita) > 1:
             for autor in self.autor_cita:
-                articulos = Articulo("", "", "", "", "", "").select_articulo_nombre(autor.nombre, autor.apellido1, autor.apellido2,self.editorial_cita.nombre)
-                """ahora miramos, si esta vacia la lista los metemos todos, si no estan, solo nos quedaremos con los comunes en la lista definitiva"""
-                if articulos_definitivos == []:
-                    """guardamos los nombres de los articulos en la lista"""
-                    for articulo in articulos:
-                        articulos_definitivos.append(articulo[0])
+                articulos = Articulo("","","","","").select_articulo_nombre(autor.nombre,autor.apellido,autor.apellido2,self.editorial_cita.getNombre())
+                for articulo in articulos:
+                    articulos_nombre.append(articulo[0])
+            for nombre in articulos_nombre:
+                if nombre in conteo_repeticiones:
+                    conteo_repeticiones[nombre]+=1
                 else:
-                    """guardamos en una lista temporal los articulos de este autor y en la lista defintiva nos quedamos con los articulos que esten en ambas listas"""
-                    articulos_temporales = []
-                    for articulo in articulos:
-                        articulos_temporales.append(articulo[0])
-                    articulos_definitivos = list(set(articulos_definitivos) & set(articulos_temporales))
+                    conteo_repeticiones[nombre] = 1
+            articulos_definitivo = [nombre for nombre, repeticiones in conteo_repeticiones.items() if repeticiones > 1]
+            self.list_articulos.delete(0,"end")
+            for nombre in articulos_definitivo:
+                self.list_articulos.insert("end",nombre)
+        else:
+            pass
+        
 
-            self.list_articulos.delete(0, "end")
-            for articulo in articulos_definitivos:
-                self.list_articulos.insert("end", articulo)
+            
+    def agregar_articulo(self):
 
+        self.entry_articulo_nombre.configure(highlightbackground="black")
+        self.entry_articulo_ano.configure(highlightbackground="black")
+        self.entry_articulo_lugar.configure(highlightbackground="black")
+        self.entry_numero.configure(highlightbackground="black")
+
+        if self.entry_articulo_nombre.get() != "" and self.entry_articulo_lugar.get() != "" and self.entry_articulo_ano.get() != "" and self.entry_numero.get() != "":
+            articulo = Articulo(self.entry_articulo_nombre.get(), int(self.entry_articulo_ano.get()), self.entry_articulo_lugar.get(),self.editorial_cita ,self.entry_numero.get())
+            status = articulo.insert_articulo(self.editorial_cita.getNombre())
+            if status == 1:
+                insertado = self.insert_autor_articulo(articulo)
+                if insertado == 1:
+                    self.load_articulos_de_autores()
+                    messagebox.showinfo("Exito", "Articulo agregado correctamente")
+                    self.entry_articulo_nombre.delete(0, "end")
+                    self.entry_articulo_ano.delete(0, "end")
+                    self.entry_articulo_lugar.delete(0, "end")
+                    self.entry_numero.delete(0, "end")
+                    self.entry_articulo_nombre.master.focus_set()
+                    logging.info("Articulo agregado correctamente")
+                else:
+                    messagebox.showerror("Error", "No se pudo insertar el articulo")
+                    logging.error("No se pudo insertar el articulo")
+        else:
+            messagebox.showerror("Error", "No se pueden dejar campos vacios")
+            if self.entry_articulo_nombre.get() == "":
+                self.entry_articulo_nombre.configure(highlightbackground="red")
+            if self.entry_articulo_lugar.get() == "":
+                self.entry_articulo_lugar.configure(highlightbackground="red")
+            if self.entry_articulo_ano.get() == "":
+                self.entry_articulo_ano.configure(highlightbackground="red")
+            if self.entry_numero.get() == "":
+                self.entry_numero.configure(highlightbackground="red")
+            logging.error("No se pueden dejar campos vacios")
+            self.entry_articulo_nombre.master.focus_set()
+
+    def insert_autor_articulo(self,articulo:Articulo) -> int:
+        for autor in self.autor_cita:
+            status=articulo.insert_articulo_autor(articulo.nombre,autor.nombre, autor.apellido, autor.apellido2)
+            if status==1:
+                pass
+            else:
+                messagebox.showerror("Error", "No se pudo insertar el articulo")
+                logging.error("No se pudo insertar el articulo")
+                return 0
+        return 1
+    
+    def reset_articulos(self):
+        if messagebox.askyesno("Resetear","¿Estas seguro de eliminar todos los datos?"):
+            status = Articulo("","","","","").reset_articulo()
+            if status == 1:
+                status = Articulo("","","","","").reset_aritulo_autor()
+                if status == 1:
+                    messagebox.showinfo("Resetear","Datos eliminados correctamente")
+                else:
+                    messagebox.showerror("Resetear","Fallo en el reseteo")
+            else:
+                messagebox.showerror("Resetear","Fallo en el reseteo")
