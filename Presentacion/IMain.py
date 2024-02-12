@@ -439,6 +439,12 @@ class IMain:
             if status == 1:
                 status = Articulo("","","","","").reset_aritulo_autor()
                 if status == 1:
+                    self.load_articulos_de_autores()
+                    self.entry_articulo_nombre.delete(0, "end")
+                    self.entry_articulo_ano.delete(0, "end")
+                    self.entry_articulo_lugar.delete(0, "end")
+                    self.entry_numero.delete(0, "end")
+                    self.entry_articulo_nombre.master.focus_set()
                     messagebox.showinfo("Resetear","Datos eliminados correctamente")
                 else:
                     messagebox.showerror("Resetear","Fallo en el reseteo")
