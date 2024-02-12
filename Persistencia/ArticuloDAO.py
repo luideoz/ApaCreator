@@ -45,9 +45,8 @@ class ArticuloDAO:
     
     def delete_articulo(self,nombre):
         db = DBManager()
-        query = "DELETE FROM articulos WHERE nombre = ?"
-        values = (nombre)
-        return db.insert_delete_reset("articulos",query, values)
+        query = "DELETE FROM articulos WHERE nombre = '"+nombre+"' "
+        return db.insert_delete_reset("articulos",query, None)
     
     def delete_articulo_autor(self,nombre,nombreA,apellido1A,apellido2A):
         db = DBManager()

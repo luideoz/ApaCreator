@@ -451,7 +451,7 @@ class IMain:
             status = articulo.delete_articulo()
             if status == 1:
                 for autor in self.autor_cita:
-                    status = articulo.delete_articulo_autor(articulo.nombre,autor.nombre,autor.apellido,autor.apellido2)
+                    status = articulo.delete_articulo_autor(autor.nombre,autor.apellido,autor.apellido2)
                     if status == 1:
                         pass
                     else:
@@ -473,9 +473,9 @@ class IMain:
         self.entry_articulo_nombre.delete(0, "end")
         self.entry_articulo_nombre.insert(0, articulo[0][0])
         self.entry_articulo_ano.delete(0, "end")
-        self.entry_articulo_ano.insert(0, articulo[0][1])
+        self.entry_articulo_ano.insert(0, articulo[0][2])
         self.entry_articulo_lugar.delete(0, "end")
-        self.entry_articulo_lugar.insert(0, articulo[0][2])
+        self.entry_articulo_lugar.insert(0, articulo[0][1])
         self.entry_numero.delete(0, "end")
         self.entry_numero.insert(0, articulo[0][3])
         self.btn_eliminar_articulo.configure(state="active")
