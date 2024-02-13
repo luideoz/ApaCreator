@@ -499,6 +499,15 @@ class IMain:
                 messagebox.showerror("Eliminar","No se pudo eliminar el articulo")
     
     def click_articulo(self):
+        if self.list_articulos.curselection() == ():
+            self.btn_eliminar_articulo.configure(state="disabled")
+            self.btn_next_articulo.configure(state="disabled")
+            self.entry_articulo_nombre.delete(0, "end")
+            self.entry_articulo_ano.delete(0, "end")
+            self.entry_articulo_lugar.delete(0, "end")
+            self.entry_numero.delete(0, "end")
+            return
+        
         articulo = Articulo(self.list_articulos.get(self.list_articulos.curselection()[0]),"","","","").select_articulo()
         self.entry_articulo_nombre.delete(0, "end")
         self.entry_articulo_nombre.insert(0, articulo[0][0])
