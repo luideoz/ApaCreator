@@ -226,6 +226,23 @@ class IMain:
                     autor = Autor(item[2], item[0], item[1])
                     status = autor.delete()
                     if status == 1:
+                        """antes eliminaremos aquellos articulos que tengan a estos autores, tendremos que borrar de las dos tablas de articulos"""
+                        """CRITERIO DE BORRADO: si un articulo tiene mas autores, no se borrara, si tiene un solo autor, se borrara"""
+                        status = Articulo("","","","","").delete_articulo_autor_con_nombre(autor.nombre, autor.apellido, autor.apellido2)
+                        if status == 1:
+                            status = Articulo("","","","","").delete_articulo_sin_autor()
+                            if status == 1:
+                                pass
+                            else:
+                                messagebox.showerror("Error", "No se pudo eliminar el autor")
+                                logging.error("No se pudo eliminar el autor")
+                                self.entry_nombre.master.focus_set()
+                                return
+                        else:
+                            messagebox.showerror("Error", "No se pudo eliminar el autor")
+                            logging.error("No se pudo eliminar el autor")
+                            self.entry_nombre.master.focus_set()
+                            return
                         self.list_autores.delete(0, "end")
                         autores = autor.SelectAurotes()
                         for autor in autores:
@@ -353,6 +370,17 @@ class IMain:
             editorial = Editorial(self.entry_editorial_nombre.get())
             status = editorial.delete()
             if status == 1:
+                """borramos los articulos de esa editorial"""
+                status = Articulo("","","","","").delete_articulo_con_editorial(editorial.getNombre())
+                if status == 1:
+                    status = Articulo("","","","","").delete_articulos_autor_sin_articulo()
+                    if status == 1:
+                        pass
+                    else:
+                        messagebox.showerror("Error", "No se pudo eliminar la editorial")
+                        logging.error("No se pudo eliminar la editorial")
+                        self.entry_editorial_nombre.master.focus_set()
+                        return
                 self.list_editorial.delete(0, "end")
                 editoriales = editorial.SelectEditoriales()
                 for editorial in editoriales:

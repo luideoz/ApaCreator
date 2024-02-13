@@ -36,6 +36,16 @@ class Articulo:
     def delete_articulo_autor(self,nombreA,apellido1A,apellido2A):
         return self.articuloDAO.delete_articulo_autor(self.nombre,nombreA,apellido1A,apellido2A)
     
-
+    def delete_articulo_autor_con_nombre(self,nombreA,apellido1A,apellido2A):
+        return self.articuloDAO.delete_articulo_autor_con_nombre(nombreA,apellido1A,apellido2A)
+    
+    def delete_articulo_sin_autor(self):
+        return self.articuloDAO.delete_articulo_sin_autor()
+    
+    def delete_articulo_con_editorial(self,editorial):
+        return self.articuloDAO.delete_articulo_con_editorial(editorial)
+    
+    def delete_articulos_autor_sin_articulo(self):
+        return self.articuloDAO.delete_articulos_autor_sin_articulo()
     
     
