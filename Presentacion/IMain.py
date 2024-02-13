@@ -232,7 +232,7 @@ class IMain:
                         if status == 1:
                             status = Articulo("","","","","").delete_articulo_sin_autor()
                             if status == 1:
-                                pass
+                                self.load_articulos_de_autores()
                             else:
                                 messagebox.showerror("Error", "No se pudo eliminar el autor")
                                 logging.error("No se pudo eliminar el autor")
@@ -375,7 +375,7 @@ class IMain:
                 if status == 1:
                     status = Articulo("","","","","").delete_articulos_autor_sin_articulo()
                     if status == 1:
-                        pass
+                        self.load_articulos_de_autores()
                     else:
                         messagebox.showerror("Error", "No se pudo eliminar la editorial")
                         logging.error("No se pudo eliminar la editorial")
