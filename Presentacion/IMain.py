@@ -17,7 +17,7 @@ class IMain:
 
         logger = logging.getLogger()
         logger.setLevel(logging.INFO)
-        handler = logging.FileHandler("Logs/IMain.log")
+        handler = logging.FileHandler("Logs/IMain.log", "w", "utf-8")
         handler.setLevel(logging.ERROR)
         formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
         handler.setFormatter(formatter)
@@ -152,7 +152,24 @@ class IMain:
         self.btn_next_articulo = Button(self.frame_articulos, text="Siguiente",  state="disabled",font=(self.config["font-family"], self.config["btn-font-size"]), width=15, command=self.next_tab_citas)
         self.btn_next_articulo.place(x=730, y=520)
 
+        """FRAME DE CITAS"""
+        self.frame_citas = Frame(self.tab_citas, background=self.config["background-color"])
+        self.frame_citas.place(x=0, y=0, width=1000, height=600)
+        self.lbl_rango_paginas = Label(self.frame_citas, text="Rango de paginas", background=self.config["background-color"], font=(self.config["font-family"], self.config["lbl-font-size"]), foreground=self.config["foreground"])
+        self.lbl_rango_paginas.place(x=400, y=10)
+        self.entry_rango_paginas = Entry(self.frame_citas, font=(self.config["font-family"], self.config["entry-font-size"]), width=30)
+        self.entry_rango_paginas.place(x=325, y=45)
+        self.lbl_cita = Label(self.frame_citas, text="Cita", background=self.config["background-color"], font=(self.config["font-family"], self.config["lbl-font-size"]), foreground=self.config["foreground"])
+        self.lbl_cita.place(x=450, y=100)
+        self.entry_cita = Entry(self.frame_citas, font=(self.config["font-family"], self.config["entry-font-size"]), width=50, state="readonly")
+        self.entry_cita.place(x=180, y=135)
+        self.btn_generar_cita = Button(self.frame_citas, text="Generar Cita", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"], command=self.generar_cita)
+        self.btn_generar_cita.place(x=380, y=200)
+        self.btn_back_cita = Button(self.frame_citas, text="Volver", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"], command=self.back_tab_articulos)
+        self.btn_back_cita.place(x=380, y=250)
+
         self.window.mainloop()
+
 
     
     def load_config(self):
@@ -502,3 +519,26 @@ class IMain:
     def back_tab_editorial(self):
         self.tab_control.select(self.tab_editorial)
         logging.info("Pestaña anterior seleccionada correctamente")
+    
+    def back_tab_articulos(self):
+        self.tab_control.select(self.tab_articulos)
+        logging.info("Pestaña anterior seleccionada correctamente")
+    
+    def generar_cita(self):
+        cita = ""
+        if len(self.autor_cita) <= 2:
+            for autor in self.autor_cita:
+                cita = cita + autor.apellido.upper() + " " + autor.apellido2.upper() + " " + autor.nombre.upper() + ","
+        else:
+            cita = self.apellido.upper() + " " + self.apellido2.upper() + " " + self.nombre.upper() + " et al."
+        
+        if self.entry_rango_paginas.get() == "":
+            cita+= self.articulo_cita.nombre + "," + self.articulo_cita.lugar + "," + str(self.articulo_cita.ano) + "."
+        else:
+            cita+= self.articulo_cita.nombre + "," + self.entry_rango_paginas.get() + "," + self.articulo_cita.lugar + "," + str(self.articulo_cita.ano) + "."
+        
+        self.entry_cita.configure(state="normal")
+        self.entry_cita.delete(0, "end")
+        self.entry_cita.insert(0, cita)
+        self.entry_cita.configure(state="readonly")
+        logging.info("Cita generada correctamente")
