@@ -147,9 +147,9 @@ class IMain:
         self.btn_eliminar_articulo.place(x=500, y=420)
         self.btn_reset_articulo = Button(self.frame_articulos, text="Reset", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"],command=self.reset_articulos)
         self.btn_reset_articulo.place(x=500, y=470)
-        self.btn_back_articulo = Button(self.frame_articulos, text="Volver", font=(self.config["font-family"], self.config["btn-font-size"]), width=15)
+        self.btn_back_articulo = Button(self.frame_articulos, text="Volver", font=(self.config["font-family"], self.config["btn-font-size"]), width=15, command=self.back_tab_editorial)
         self.btn_back_articulo.place(x=350, y=520)
-        self.btn_next_articulo = Button(self.frame_articulos, text="Siguiente",  state="disabled",font=(self.config["font-family"], self.config["btn-font-size"]), width=15)
+        self.btn_next_articulo = Button(self.frame_articulos, text="Siguiente",  state="disabled",font=(self.config["font-family"], self.config["btn-font-size"]), width=15, command=self.next_tab_citas)
         self.btn_next_articulo.place(x=730, y=520)
 
         self.window.mainloop()
@@ -193,8 +193,6 @@ class IMain:
                 messagebox.showinfo("Exito", "Autor agregado correctamente")
                 """quitamos el foco de los entry"""
                 self.entry_nombre.master.focus_set()
-                self.btn_eliminar_autor.configure(state="active")
-                self.btn_next.configure(state="active")
                 logging.info("Autor agregado correctamente")
             else:
                 messagebox.showerror("Error", "No se pudo agregar el autor")
@@ -496,5 +494,11 @@ class IMain:
         self.btn_eliminar_articulo.configure(state="active")
         self.btn_next_articulo.configure(state="active")
         self.entry_articulo_nombre.master.focus_set()
+    
+    def next_tab_citas(self):
+        self.articulo_cita = Articulo(self.entry_articulo_nombre.get(),self.entry_articulo_ano.get(),self.entry_articulo_lugar.get(),self.editorial_cita,self.entry_numero.get())
+        self.tab_control.select(self.tab_citas)
 
-        
+    def back_tab_editorial(self):
+        self.tab_control.select(self.tab_editorial)
+        logging.info("Pestaña anterior seleccionada correctamente")
