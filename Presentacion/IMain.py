@@ -148,15 +148,15 @@ class IMain:
         self.lbl_numero.place(x=600, y=280)
         self.entry_numero = Entry(self.frame_articulos, font=(self.config["font-family"], self.config["entry-font-size"]), width=30)
         self.entry_numero.place(x=450, y=315)
-        self.btn_agregar_articulo = Button(self.frame_articulos, text="Agregar", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"], command=self.agregar_articulo)
-        self.btn_agregar_articulo.place(x=500, y=370)
-        self.btn_eliminar_articulo = Button(self.frame_articulos, text="Eliminar", state="disabled", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"],command=self.delete_articulo)
-        self.btn_eliminar_articulo.place(x=500, y=420)
-        self.btn_reset_articulo = Button(self.frame_articulos, text="Reset", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"],command=self.reset_articulos)
-        self.btn_reset_articulo.place(x=500, y=470)
-        self.btn_back_articulo = Button(self.frame_articulos, text="Volver", font=(self.config["font-family"], self.config["btn-font-size"]), width=15, command=self.back_tab_editorial)
+        self.btn_agregar_articulo = Button(self.frame_articulos, text="Agregar", font=(self.config["font-family"], self.config["btn-font-size"]), command=self.agregar_articulo, image=kitty1, compound="left", height=35)
+        self.btn_agregar_articulo.place(x=350, y=420)
+        self.btn_eliminar_articulo = Button(self.frame_articulos, text="Eliminar", state="disabled", font=(self.config["font-family"], self.config["btn-font-size"]),command=self.delete_articulo, image=kitty2, compound="left", height=35)
+        self.btn_eliminar_articulo.place(x=550, y=420)
+        self.btn_reset_articulo = Button(self.frame_articulos, text="Reset", font=(self.config["font-family"], self.config["btn-font-size"]), command=self.reset_articulos, image=kitty3, compound="left", height=35)
+        self.btn_reset_articulo.place(x=750, y=420)
+        self.btn_back_articulo = Button(self.frame_articulos, text="Volver", font=(self.config["font-family"], self.config["btn-font-size"]), command=self.back_tab_editorial, image=kitty4, compound="left", height=35)
         self.btn_back_articulo.place(x=350, y=520)
-        self.btn_next_articulo = Button(self.frame_articulos, text="Siguiente",  state="disabled",font=(self.config["font-family"], self.config["btn-font-size"]), width=15, command=self.next_tab_citas)
+        self.btn_next_articulo = Button(self.frame_articulos, text="Siguiente",  state="disabled",font=(self.config["font-family"], self.config["btn-font-size"]), command=self.next_tab_citas, image=kitty5, compound="left", height=35)
         self.btn_next_articulo.place(x=730, y=520)
 
         """FRAME DE CITAS"""
@@ -170,10 +170,10 @@ class IMain:
         self.lbl_cita.place(x=450, y=100)
         self.entry_cita = Entry(self.frame_citas, font=(self.config["font-family"], self.config["entry-font-size"]), width=50, state="readonly")
         self.entry_cita.place(x=180, y=135)
-        self.btn_generar_cita = Button(self.frame_citas, text="Generar Cita", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"], command=self.generar_cita)
-        self.btn_generar_cita.place(x=380, y=200)
-        self.btn_back_cita = Button(self.frame_citas, text="Volver", font=(self.config["font-family"], self.config["btn-font-size"]), width=self.config["btn-size"], command=self.back_tab_articulos)
-        self.btn_back_cita.place(x=380, y=250)
+        self.btn_generar_cita = Button(self.frame_citas, text="Generar Cita", font=(self.config["font-family"], self.config["btn-font-size"]),command=self.generar_cita, image=kitty1, compound="left", height=35)
+        self.btn_generar_cita.place(x=280, y=200)
+        self.btn_back_cita = Button(self.frame_citas, text="Volver", font=(self.config["font-family"], self.config["btn-font-size"]),command=self.back_tab_articulos, image=kitty4, compound="left", height=35)
+        self.btn_back_cita.place(x=550, y=200)
 
         self.window.mainloop()
 
@@ -566,6 +566,9 @@ class IMain:
     
     def back_tab_articulos(self):
         self.tab_control.select(self.tab_articulos)
+        self.entry_cita.configure(state="normal")
+        self.entry_cita.delete(0, "end")
+        self.entry_cita.configure(state="readonly")
         logging.info("Pestaña anterior seleccionada correctamente")
     
     def generar_cita(self):
