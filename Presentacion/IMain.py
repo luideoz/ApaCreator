@@ -459,10 +459,6 @@ class IMain:
                 if insertado == 1:
                     self.load_articulos_de_autores()
                     messagebox.showinfo("Exito", "Articulo agregado correctamente")
-                    self.entry_articulo_nombre.delete(0, "end")
-                    self.entry_articulo_ano.delete(0, "end")
-                    self.entry_articulo_lugar.delete(0, "end")
-                    self.entry_numero.delete(0, "end")
                     self.entry_articulo_nombre.master.focus_set()
                     logging.info("Articulo agregado correctamente")
                 else:
