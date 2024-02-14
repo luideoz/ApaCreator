@@ -313,6 +313,8 @@ class IMain:
     def reset_autores(self):
         if messagebox.askyesno("Reset", "¿Estas seguro de que quieres borrar todos los autores?"):
             Autor("","","").reset()
+            Articulo("","","","","").reset_articulo()
+            Articulo("","","","","").reset_aritulo_autor()
             self.list_autores.delete(0, "end")
             self.entry_nombre.delete(0, "end")
             self.entry_apellido1.delete(0, "end")
@@ -406,6 +408,8 @@ class IMain:
     def reset_editorial(self):
         if messagebox.askyesno("Reset", "¿Estas seguro de que quieres borrar todas las editoriales?"):
             Editorial("").reset()
+            Articulo("","","","","").reset_articulo()
+            Articulo("","","","","").reset_aritulo_autor()
             self.list_editorial.delete(0, "end")
             self.entry_editorial_nombre.delete(0, "end")
             messagebox.showinfo("Exito", "Editoriales eliminadas correctamente")
@@ -573,7 +577,7 @@ class IMain:
             for autor in self.autor_cita:
                 cita = cita + autor.apellido.upper() + " " + autor.apellido2.upper() + " " + autor.nombre.upper() + ","
         else:
-            cita = self.apellido.upper() + " " + self.apellido2.upper() + " " + self.nombre.upper() + " et al."
+            cita = self.autor_cita[0].apellido.upper() + " " + self.autor_cita[0].apellido2.upper() + " " + self.autor_cita[0].nombre.upper() + " et al."
         
         if self.entry_rango_paginas.get() == "":
             cita+= self.articulo_cita.nombre + "," + self.articulo_cita.lugar + "," + str(self.articulo_cita.ano) + "."
